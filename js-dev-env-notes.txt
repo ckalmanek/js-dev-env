@@ -1,0 +1,113 @@
+Install editorconfig plug-in for VSCode
+nvm install v8.11.0
+Edit package.json with course dependencies
+npm install
+npm install --global nsp
+nsp check
+
+node buildScripts/srcServer.js
+
+(install now to share node.js or Docker app via cloud)
+
+transpilers:
+
+babel, typescript, elm
+
+babel plugins that determine what needs to be transpiled for target environment
+node: babel-preset-es2015-node
+electron: babel-preset-latest-minimal
+
+run babel-node buildScripts/startMessag.js etc. (instead of node) if transpiling needed
+
+common module formats:
+
+IIFE: Immediately Invoked Function Expressions
+AMD: another way of encapsulating code
+CommonJS: if working in node, can use CommonJS
+UMD:
+ES6 modules: standardized, statically analyzable, easy to read (e.g., named imports, default exports)
+
+bundlers: into single minified file
+
+browserify: simple, bundles npm packages using commons js pattern for the web
+webpack: import CSS, images like JS, built in hot reloading (serves files in memory)
+rollup: tree shaking (dead code elim), faster than webpack (which inlines module loader,) new
+jspm: uses system js, can load modules at run time (has its own package manager), works with rollup
+
+configure webpack, then configure express to set up webpack bundle
+tell express to use webpack dev middleware 
+
+now need to write some javascript!  startMessage.js prints to console
+then create index.css and import it in index.js 
+
+Linters: use ESLint
+
+config file
+rules
+warnings or errors
+plugins: e.g., eslint-plugin-react
+preset?
+
+ESLint config
+eslint-loader: all files relinted on save
+eslint-watch: wrapper that adds file watching
+
+use babel-eslint if you want to use experimental features
+
+configuration options for ESLint: .eslintrc file in project root, or package.json
+
+root: eslint looks in all parent folders up to root
+no-console: set up as a warning
+
+create an npm watch to pass watch flag to eslint
+
+Javascript unit testing:
+
+Framework: mocha, jasmine, tape, qunit, ava, jest
+Assertion library: mocha doesn't come with one.  chai, shouldjs, expect
+Helper library: jsdom (run tests involving dom wo browser), 
+  cheerio (jquery for server)
+Where to run tests: browser (karma, testem), headless browser (phantomJS),
+  in-memory DOM (jsdom, simulates dom in memory)
+Where to put tests: centralized vs alongside
+When to run tests: for unit tests, when you hit save
+
+index.test.js:
+
+using expect from chai
+need tor register babel with mocha to transpile test files; also disable webpack featuers that mocha doesn't understand
+
+jsdom.env test: you can optional provide a JS array to load into JSDOM environment
+note if any files use fetch, must use isomorphic fetch instead (fetch is a browser feature not available in node)
+
+Setting up CI:
+
+Travis: Linux, integration with Github
+Appveyor: Windows
+
+Http call approaches:
+
+node: http, request
+browser: XMLHttpRequest, jQuery, framework based, fetch (WHAT WG)
+use a polyfill to address browser compatibilit
+
+node+browser: isomorphic fetch, xhr, SuperAgent, Axios
+
+you can use polyfill.io to send polyfill's only to browsers that need it
+put script at top of index.js, and polyfill will read user agent and add polyfill for features listed if needed
+
+mocking http api:
+
+1. nock is a convenient way to mock http calls
+2. point to static json 
+3. create development webserver using api-mock or JSON server. use json schema faker.
+you can also just set up express server
+
+plan
+
+1. declare schema using json schema faker
+2. generate random data, using faker.js, chance.js, randexp.js
+3. server data using json server via api using mock data set
+
+
+
