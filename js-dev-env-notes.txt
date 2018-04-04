@@ -17,7 +17,7 @@ babel plugins that determine what needs to be transpiled for target environment
 node: babel-preset-es2015-node
 electron: babel-preset-latest-minimal
 
-run babel-node buildScripts/startMessag.js etc. (instead of node) if transpiling needed
+run babel-node buildScripts/startMessage.js etc. (instead of node) if transpiling needed
 
 common module formats:
 
@@ -107,7 +107,130 @@ plan
 
 1. declare schema using json schema faker
 2. generate random data, using faker.js, chance.js, randexp.js
-3. server data using json server via api using mock data set
+3. serve data using json server via api using mock data set
 
+after we are generating mock data using faker, modify srcServer.js s.t. existing code is the production server
+create baseUrl to set baseUrl depending on environment
 
+Project structure
+
+1. Put JS in a .js file
+2. Avoid dynamically generating JS code
+Use configuration object pattern when needed to customize user experience by passing JSON to client
+(send JSON data from server to control logic)
+
+Organize code by feature, not file type
+E.g., /authors, /courses, rather than /components, /data, /models, /views
+
+3. Extract logic to POJO's
+See react-slingshot utils folder
+
+Production build
+
+Set up build for production, modifying webpack.config.dev.js -> prod 
+Set up distServer.js, modifying srcServer.js.   Remove all webpack refs, add line telling express to serve static files
+Only used to test production builds locally
+
+Write build.js buildScript to generate production build
+
+Modify baseUrl.js to allow useMockApi flag to be set in query string. 
+This allows testing production API using local dev server (vs. mock API)
+
+Note that index.html is not in /dist folder
+
+Manipulate HTML for production
+1. Set expires headers in production
+2. Generate dynamic bundle names
+3. Minify HTML
+
+How set up index.html to reference bundle?
+1. hardcoded reference to bundle.js
+2. manipulate html via node script
+3. html-webpack-plugin: generates /dist/index.html and injects script tags in html
+
+cache busting: generate different file name each time assets change
+bundle splitting: load only what you need to, critical for larger apps
+(e.g., bundle per page, dependencies)
+
+Set up web server to set expires headers up to one year in the future
+Webpack can make can busting deterministic by adding a hash code to the file name
+
+Error logging:
+
+TrackJS, Sentry, New Relic, Raygun
+
+Good error meta-data (browser, stack trace, previous action, custom APIS)
+Notifications
+Analytics and alerting
+Pricing
+
+Add track.js code to head of index.html file
+
+Only want to add it in production
+Use embedded JS (EJS) to add a conditional in index.html
+
+<head>
+  <% if (htmlWebpackPlugin.options.trackJSToken) { %>
+  <script type="text/javascript">window._trackJS = { token: '<%=htmlWebpackPlugin.options.trackJSToken%>' };</script>
+  <script type="text/javascript" src=https://cdn.trackjs.com/releases/current/tracker.js"></script>
+  <% } %>
+  <meta charset="UTF-8">
+</head>
+
+Production 
+
+Separate UI and API layer in separate projects
+
+Hosting: AWS, Azure, GCP, Heroku, Firebase, Github, Surge 
+Will use Herkou to host API and Surge to host (static) UI
+
+development process
+
+npm start (development)
+npm run build (build UI)
+npm run deploy
+
+Handling updates to starter kits
+
+Yeoman, Github, npm
+
+Yeoman: project generator, lots of examples
+Steps:
+1. Commit changes
+2. Rerun generator over existing project
+3. Fix discrepancies manually
+
+Github
+1. Host project on Github
+2. Fork starter kit for new projects
+3. Pull changes from master
+
+npm
+1. Wrap starter kit in npm package
+2. update npm package to receive changes
+downside is that you can't tweak things inside a package for a project 
+
+buildscripts are easiest to centralize as npm package
+package.json: streamline scripts to call buildscripts instead 
+webpack.config: move to npm package
+.eslintrc: create preset
+
+decentralize: 
+
+.editorconfig
+.babelrc
+CI server configuration
+package references in package.json
+
+inspiration:
+
+andrewhfarmer.com/starter-project: long list of React projects
+github.com/gianarb/awesome-angularjs: called seed projects 
+
+challenge:
+
+would we benefit from a starter kit?
+what pain points do we have in javascript today?
+testing, failed builds, inconsistent styles
+would we benefit from a demo app?
 

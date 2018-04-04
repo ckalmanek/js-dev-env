@@ -1,4 +1,5 @@
 import path from 'path'; // path package comes with node
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 export default {
   debug: true,
@@ -13,7 +14,13 @@ export default {
     publicPath: '/',
     filename: 'bundle.js' // in dev mode, it creates in memory not a file
   },
-  plugins: [],
+  plugins: [
+       // Create HTML file that includes reference to bundled JS
+       new HtmlWebpackPlugin({
+        template: 'src/index.html',
+        inject: true
+      })
+  ],
   module: {
     loaders: [ // file types webpack will handle
       {test: /\.js$/, exclude: /node_modules/, loaders: ['babel']},
